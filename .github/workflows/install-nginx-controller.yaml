@@ -49,6 +49,10 @@ jobs:
     - name: Deploy to AKS
       id: deploy-ingress
       run: |
+        echo "Getting credentials from ${{ inputs.aks_cluster_name }} AKS cluster "
+        az aks get-credentials --resource-group ${{ inputs.aks_resource_group_name }} --name ${{ inputs.aks_cluster_name }}
+        kubelogin convert-kubeconfig -l azurecli
+
         echo "Current Cluster Name is: $(kubectl config current-context)"
 
         echo "Installing ingress nginx controller using helm..."
