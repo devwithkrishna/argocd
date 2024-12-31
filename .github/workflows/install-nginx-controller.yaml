@@ -42,6 +42,10 @@ jobs:
         resource-group: '${{ inputs.aks_resource_group_name }}'
         cluster-name: '${{ inputs.aks_cluster_name }}'
 
+    - uses: azure/use-kubelogin@v1
+      with:
+        kubelogin-version: 'v0.0.24'
+
     - name: Deploy to AKS
       id: deploy-ingress
       run: |
