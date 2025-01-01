@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: '{{name}}-ingress-nginx'
+  name: {{name}}-ingress-nginx
   namespace: ingress-nginx
   labels:
     app: ingress-nginx
