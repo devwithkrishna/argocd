@@ -9,7 +9,7 @@ spec:
   goTemplate: true
   generators:
   - cluster: {} # Automatically use all clusters defined within Argo CD
-  project: devwithkrishna
+  project: default
   source:
     repoURL: https://github.com/kubernetes/ingress-nginx
     targetRevision: HEAD
@@ -19,4 +19,7 @@ spec:
     namespace: ingress-nginx
   syncPolicy:
     syncOptions:
+    - ApplyOutOfSyncOnly=true
     - createNamespace=true
+    - PruneLast=true
+    - PrunePropagationPolicy=foreground
