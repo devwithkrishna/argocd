@@ -1,27 +1,38 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
-  name: ingress-nginx
+  name: ingress-nginx-controller
   namespace: ingress-nginx
   labels:
-    app: ingress-nginx
+    app: ingress-nginx-controller
 spec:
   goTemplate: true
   generators:
   - cluster: {} # Automatically use all clusters defined within Argo CD
-  project: default
-  source:
-    repoURL: https://github.com/kubernetes/ingress-nginx
-    targetRevision: HEAD
-    path: charts/ingress-nginx
-  destination:
-    server: '{{server}}'
-    namespace: ingress-nginx
-  syncPolicy:
-    syncOptions:
-    - ApplyOutOfSyncOnly=true
-    - createNamespace=true
-    - PruneLast=true
-    - PrunePropagationPolicy=foreground
-    automated:
-      selfHeal: true
+  # project: default
+  template:
+    metadata:
+      name: ingress-nginx-{{.cluster}}
+    spec:
+      project: default
+      repoURL: "https://kubernetes.github.io/ingress-nginx"
+      chart: "ingress-nginx"
+      targetRevision: "4.10.3" # Replace with the desired version
+      helm:
+        values: |
+          controller:
+            replicaCount: 2
+            service:
+              type: LoadBalancer
+      destination:
+        server: '{{.url}}'
+        namespace: ingress-nginx
+      syncPolicy:
+        syncOptions:
+        - ApplyOutOfSyncOnly=true
+        - createNamespace=true
+        - PruneLast=true
+        - PrunePropagationPolicy=foreground
+        automated:
+          prune: true
+          selfHeal: true
